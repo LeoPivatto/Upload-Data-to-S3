@@ -1,10 +1,16 @@
 const AWS = require("aws-sdk");
-const s3 = new AWS.S3();
+require("dotenv").config();
 const fs = require("fs");
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION_BUCKET,
+});
 
 const bucketName = "upload-data-test-tutorial";
 const newFileKey = "file.png";
-const filePath = "1.png";
+const filePath = "./1.png";
 
 const uploadFileToS3 = (filePath, bucketName, newFileKey) => {
   const fileStream = fs.createReadStream(filePath);
@@ -14,16 +20,15 @@ const uploadFileToS3 = (filePath, bucketName, newFileKey) => {
 
   const params = {
     Bucket: bucketName,
-    Key: newFilekey,
-    Body: filestream,
+    Key: newFileKey,
+    Body: fileStream,
   };
 
   s3.upload(params, (err, data) => {
     if (err) {
       console.error(err);
-    }
-    if (data) {
-      console.log(data.location);
+    } else {
+      console.log("data location " + data.Location);
     }
   });
 };
